@@ -11,4 +11,10 @@ namespace GameConstants
 
     // Y position of the ground (player stands on this Y)
     static constexpr float GroundY = 800.0f;
+
+    // Horizontal world scroll speed (pixels per second) used to compute distance
+    static constexpr float RunSpeed = 200.0f;
+
+    // How many pixels correspond to one meter (for distance display)
+    static constexpr float PixelsPerMeter = 50.0f;
 }

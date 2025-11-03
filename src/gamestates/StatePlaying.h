@@ -27,6 +27,17 @@ private:
     std::vector<std::unique_ptr<Enemy>> m_enemies;
     sf::RectangleShape m_ground;
     bool m_hasPauseKeyBeenReleased = true;
+    // Distance travelled in meters (float for precision)
+    float m_distanceMeters = 0.0f;
+    // Personal best (meters)
+    float m_personalBestMeters = 0.0f;
+
+    // UI text for current distance and best
+    std::unique_ptr<sf::Text> m_pDistanceText;
+    std::unique_ptr<sf::Text> m_pBestText;
+
+    // Persistence file for personal best
+    static inline const char* PersonalBestFile = "assets/best_score.txt";
 
     void updateCollisions();
 };
