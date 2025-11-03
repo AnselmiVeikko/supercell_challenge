@@ -19,6 +19,8 @@ public:
     bool init() override;
     void update(float dt) override;
     void render(sf::RenderTarget& target) const override;
-
-    bool m_isJumping = false;
+    
+private:
+    // Tracks previous frame's space-key state to detect edge (single press)
+    bool m_wasJumpKeyPressed = false;
 };

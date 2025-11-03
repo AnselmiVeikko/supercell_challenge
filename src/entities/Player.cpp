@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "ResourceManager.h"
+#include "../GameConstants.h"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <cmath>
@@ -25,23 +26,41 @@ bool Player::init()
     m_pSprite->setScale(sf::Vector2f(3.0f, 3.0f));
     m_collisionRadius = collisionRadius;
 
+    // Make sure vertical velocity starts at zero
+    m_velocity.y = 0.0f;
+
     return true;
 }
 
 void Player::update(float dt)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+    // Single-jump on space key press (edge-triggered). Use physics: velocity + gravity.
+    const bool isSpacePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);
+
+    // Consider player on ground if at or below GameConstants::GroundY
+    const bool onGround = m_position.y >= GameConstants::GroundY - 0.1f;
+
+    // If space was just pressed this frame and player is on ground, apply jump impulse
+    if (isSpacePressed && !m_wasJumpKeyPressed && onGround)
     {
-        m_isJumping = true;
+        m_velocity.y = -GameConstants::JumpVelocity;
     }
 
-    if (m_position.y < 600)
-        m_isJumping = false;
+    // Save key state for edge detection next frame
+    m_wasJumpKeyPressed = isSpacePressed;
 
-    if (m_isJumping)
-        m_position.y -= 200 * dt;
-    else if (!m_isJumping && m_position.y < 800)
-        m_position.y += 200 * dt;
+    // Apply gravity
+    m_velocity.y += GameConstants::Gravity * dt;
+
+    // Integrate position
+    m_position.y += m_velocity.y * dt;
+
+    // Clamp to ground
+    if (m_position.y > GameConstants::GroundY)
+    {
+        m_position.y = GameConstants::GroundY;
+        m_velocity.y = 0.0f;
+    }
 }
 
 void Player::render(sf::RenderTarget& target) const
